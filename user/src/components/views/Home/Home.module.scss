@@ -1,0 +1,56 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+.journey-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+}
+.address {
+  display: flex;
+  align-items: center;
+  border: 2px solid black;
+  width: 220px;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 8px;
+  padding: 2px 0px;
+}
+.addressPin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 8px;
+}
+.card {
+  display: flex;
+  align-items: center;
+  margin-top: 32px;
+}
+.chooseCard {
+  display: flex;
+  align-items: center;
+  border: 2px solid black;
+  width: 180px;
+  border-radius: 20px;
+  justify-content: space-between;
+  padding: 0px 8px;
+  margin-bottom: 16px;
+}
+.confirm-btn {
+  width: 150px;
+  height: 30px;
+  border-radius: 20px;
+  background-color: green;
+  color: white;
+  border: none;
+  margin-top: 32px;
+}
+.cancel-btn {
+  border: none;
+  background-color: white;
+  margin-top: 16px;
+}
