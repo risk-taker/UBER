@@ -5,6 +5,7 @@ import locationIcon from "../../../assets/images/location.png";
 import classes from "./home.module.scss";
 import startPin from "../../../assets/images/map-pin.png";
 import endPin from "../../../assets/images/circle.png";
+import trackingIcon from "../../../assets/images/track-location.png";
 import {
   // DirectionsService,
   GoogleMap,
@@ -24,6 +25,7 @@ const Home = () => {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [directions, setDirections] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   const containerStyle = {
     width: "700px",
@@ -31,8 +33,8 @@ const Home = () => {
   };
 
   const center = {
-    lat: 22.577152,
-    lng: 88.4506624,
+    lat: 22.583463236941196,
+    lng: 88.44589230175725,
   };
 
   const { isLoaded } = useJsApiLoader({
@@ -43,7 +45,11 @@ const Home = () => {
 
   const onLoad = React.useCallback(function callback(map) {
     // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    const bounds = new window.google.maps.LatLngBounds(center);
+    // const bounds = new window.google.maps.LatLngBounds(currentLocation);
+    // map.fitBounds(bounds);
+    // const bounds = new window.google.maps.LatLngBounds();
+    // bounds.extend(center);
+    // bounds.extend(currentLocation);
     // map.fitBounds(bounds);
     setMap(map);
   }, []);
@@ -117,6 +123,38 @@ const Home = () => {
       });
     });
   }, [isLoaded]);
+  function handleTrackCurrentLocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        const userLocation = { lat, lng };
+        console.log("User location:", userLocation);
+        // setCenter(userLocation);
+        setCurrentLocation(userLocation);
+        // Move map to current location
+        // map.panTo(userLocation);
+        map.setZoom(17);
+        map.setCenter(userLocation);
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Please allow location access");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  }
+
   return (
     <>
       <Navbar />
@@ -191,7 +229,7 @@ const Home = () => {
           </button>
           <button className={classes["cancel-btn"]}>Cancel Order</button>
         </div>
-        <div>
+        <div style={{ position: "relative" }}>
           {isLoaded ? (
             <GoogleMap
               mapContainerStyle={containerStyle}
@@ -209,11 +247,26 @@ const Home = () => {
 
               {/* Route */}
               {directions && <DirectionsRenderer directions={directions} />}
+              {/* <Marker position={center} /> */}
+              {currentLocation && <Marker position={currentLocation} />}
+              {<Marker position={center} />}
               <></>
             </GoogleMap>
           ) : (
             <></>
           )}
+          <img
+            style={{
+              height: 16,
+              position: "absolute",
+              bottom: 110,
+              right: 70,
+              cursor: "pointer",
+            }}
+            src={trackingIcon}
+            alt="track-location"
+            onClick={handleTrackCurrentLocation}
+          />
         </div>
       </div>
     </>
