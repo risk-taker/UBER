@@ -26,15 +26,14 @@ const Home = () => {
   const [destination, setDestination] = useState("");
   const [directions, setDirections] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
+  const [mapCenter, setMapCenter] = useState({
+    lat: 22.585952146257306,
+    lng: 88.44566244037816,
+  });
 
   const containerStyle = {
     width: "700px",
     height: "700px",
-  };
-
-  const center = {
-    lat: 22.583463236941196,
-    lng: 88.44589230175725,
   };
 
   const { isLoaded } = useJsApiLoader({
@@ -82,8 +81,8 @@ const Home = () => {
       }
     );
   }
-
   useEffect(() => {
+    console.log("useEffect called : ", isLoaded);
     if (!isLoaded) return;
 
     const originAutocomplete = new window.google.maps.places.Autocomplete(
@@ -124,6 +123,7 @@ const Home = () => {
     });
   }, [isLoaded]);
   function handleTrackCurrentLocation() {
+    console.log("Tracking current location...");
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
       return;
@@ -133,14 +133,18 @@ const Home = () => {
       (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
+        // const lat = 22.576164362;
+        // const lng = 88.338498646;
 
         const userLocation = { lat, lng };
         console.log("User location:", userLocation);
         // setCenter(userLocation);
         setCurrentLocation(userLocation);
+        setMapCenter(userLocation);
         // Move map to current location
-        // map.panTo(userLocation);
+        map.panTo(userLocation);
         map.setZoom(17);
+        map.fitBounds(userLocation);
         map.setCenter(userLocation);
       },
       (error) => {
@@ -153,6 +157,7 @@ const Home = () => {
         maximumAge: 0,
       }
     );
+    setCurrentLocation(userLocation);
   }
 
   return (
@@ -233,7 +238,7 @@ const Home = () => {
           {isLoaded ? (
             <GoogleMap
               mapContainerStyle={containerStyle}
-              center={center}
+              center={mapCenter}
               zoom={16}
               onLoad={onLoad}
               onUnmount={onUnmount}
@@ -249,7 +254,7 @@ const Home = () => {
               {directions && <DirectionsRenderer directions={directions} />}
               {/* <Marker position={center} /> */}
               {currentLocation && <Marker position={currentLocation} />}
-              {<Marker position={center} />}
+              {<Marker position={mapCenter} />}
               <></>
             </GoogleMap>
           ) : (
